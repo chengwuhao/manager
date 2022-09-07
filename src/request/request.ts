@@ -2,11 +2,12 @@
  * @Author: error: git config user.name && git config user.email & please set dead value or install git
  * @Date: 2022-09-02 22:22:24
  * @LastEditors: chengweiming 2977116097@qq.com
- * @LastEditTime: 2022-09-07 17:37:07
+ * @LastEditTime: 2022-09-07 23:24:32
  * @FilePath: /mangement/src/request/request.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 const instance = axios.create({
     baseURL: 'http://120.24.64.5:8088/mall-admin',
@@ -20,6 +21,11 @@ instance.interceptors.request.use(config => {
     //         formdata.append(k, config.data[k])
     //     }
     // }
+    const token = Cookies.get('token')
+    if(token) {
+        config.headers = config.headers || {}
+        config.headers.Authorization = token
+    }
     console.log(config, "config")
     return config
 }, err => {

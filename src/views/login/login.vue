@@ -1,11 +1,12 @@
 <!--
- * @Author: error: git config user.name && git config user.email & please set dead value or install git
+ * @Author: chengweiming 2977116097@qq.com
  * @Date: 2022-08-30 20:53:48
  * @LastEditors: chengweiming 2977116097@qq.com
- * @LastEditTime: 2022-09-07 18:06:27
+ * @LastEditTime: 2022-09-08 00:32:01
  * @FilePath: /mangement/src/views/login/login.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
+
 <template>
   <div>
     <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="120px" class="demo-ruleForm">
@@ -23,20 +24,31 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, Ref, toRefs, reactive } from "vue";
+import { ref, Ref, toRefs, reactive, onMounted } from "vue";
 // import { login } from '@/request/api'
-import { adminLogin } from '../../request/api'
+import type { FormRules } from 'element-plus'
+import { getUserinfoApi, adminLogin } from '../../request/userinfo'
 import Cookie from 'js-cookie'
+import { useRouter } from "vue-router";
+import { useUserinfoStore } from '../../store/userinfo'
 
-const validatePass = (rule: unknown, value: number, callback: (msg?: string) => void) => {
-  if (!!value) {
-    callback();
-  } else {
-    callback('你的密码呢？')
+
+  const userinfoSotre = useUserinfoStore()
+
+  const { userinfo, token } = reactive(userinfoSotre)
+
+  console.log(userinfo, token)
+
+
+const validatePass = (rule: unknown, value: string, callback: (msg?: string) => void) => {
+  if (!!value && (value.length > 8 || value.length < 4)) {
+    callback("密码个数不正确");
+  } else if(!!value) {
+    callback('请输入密码')
   }
 }
 // 校验规则
-const rules = reactive({
+const rules = reactive<FormRules>({
   username: [{ required: true, message: '用户名不能为空', trigger: 'blur', min: 3, max: 10, }],
   password: [{ required: true, validator: validatePass, trigger: 'blur' }]
 })
@@ -63,6 +75,8 @@ type subType = () => void;
 
 // 获取ref对象
 let ruleFormRef = ref();
+// 获取项目路由对象
+let router = useRouter()
 
 const submitForm: subType = () => {
   console.log('ruleForm.value.', ruleForm.value)
@@ -72,10 +86,20 @@ const submitForm: subType = () => {
       "password": ruleForm.value.password
     }).then(res => {
       if (res.code === 200) {
-        console.log(res.data, 'res')
-        console.log(Cookie, 'cookies')
         // 存储token
+        Cookie.set('token', res.data.tokenHead + res.data.token, { expires: 7 })
 
+        getUserinfoApi().then(res => {
+          // 跳转home页面
+          if (res.code == 200) {
+            console.log(JSON.stringify(res.data), 'res.data.menus')
+            // 存到pinia里面
+            Cookie.set('userinfo', JSON.stringify(res.data), { expires: 7 })
+
+            // router.push('./home')
+          }
+
+        })
       }
     })
   }).catch(() => {

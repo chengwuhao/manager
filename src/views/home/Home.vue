@@ -1,29 +1,15 @@
-<!--
- * @Author: error: git config user.name && git config user.email & please set dead value or install git
- * @Date: 2022-09-02 21:04:42
- * @LastEditors: error: git config user.name && git config user.email & please set dead value or install git
- * @LastEditTime: 2022-09-03 18:27:00
- * @FilePath: /mangement/src/views/home/Home.vue
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
--->
+
 <template>
-  <div class="wraper">
+  <div class="container">
     <header class="header">
-      <div>left</div>
-      <div>middle</div>
-      <div>footer</div>
+      tiy
     </header>
     <main class="main">
-      <div v-for="item in 100">
-        <div>{{ item }}</div>
-        <div>老子不信我不成功</div>
-      </div>
+      <div class="left"></div>
+      <div class="right"></div>
     </main>
     <footer class="footer">
-      <div class="footer-item" v-for="item in footer">
-        <div>{{ item.icon }}</div>
-        <div>{{ item.text }}</div>
-      </div>
+      右侧
     </footer>
   </div>
 </template>
@@ -57,23 +43,37 @@ const footer = reactive<Footer<string>[]>([
 </script>
 
 <style lang="less" scoped>
-.wraper {
+.container {
+  position: relative;
   width: 100%;
-  min-height: 100vh;
-  overflow: scroll;
-  display: flex;
-  flex-direction: column;
 
   .header {
-    display: flex;
-    justify-content: space-around;
-    background-color: pink;
-    padding: 5px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background-color: antiquewhite;
   }
 
   .main {
-    flex: 1;
-    overflow: scroll;
+    position: absolute;
+    left: 0;
+    top: 70px;
+    width: 100%;
+    display: flex;
+    height: calc(100vh - 70px);
+
+
+    .left {
+      width: 100px;
+    }
+
+
+    .right {
+      flex: 1;
+      height: 100%;
+    }
   }
 
   .footer {
@@ -85,6 +85,7 @@ const footer = reactive<Footer<string>[]>([
     grid-template-columns: 1fr 1fr 1fr 1fr;
     border-top: 1px solid #ccc;
     background: green;
+
     .footer-item {
       display: flex;
       justify-content: center;
